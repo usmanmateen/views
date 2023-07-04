@@ -23,7 +23,7 @@
     <input type="text" id="video-link">
 
     <label for="embed-count">Number of Embeds:</label>
-    <input type="number" id="embed-count" min="1" max="50">
+    <input type="number" id="embed-count" min="1" max="10">
 
     <button onclick="embedVideos()">Play</button>
 
@@ -39,4 +39,36 @@
                 videoId = match[1];
             }
 
-            return video
+            return videoId;
+        }
+
+        function createVideoFrame(videoId) {
+            var iframe = document.createElement("iframe");
+            iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+            iframe.allowfullscreen = true;
+            iframe.setAttribute("allow", "autoplay");
+            return iframe;
+        }
+
+        function embedVideos() {
+            var videoUrl = document.getElementById("video-link").value;
+            var embedCount = parseInt(document.getElementById("embed-count").value);
+            var videoContainer = document.getElementById("video-container");
+
+            videoContainer.innerHTML = "";
+
+            var videoId = getVideoIdFromUrl(videoUrl);
+
+            if (videoId) {
+                for (var i = 0; i < embedCount; i++) {
+                    var videoFrame = createVideoFrame(videoId);
+                    videoContainer.appendChild(videoFrame);
+                }
+            } else {
+                videoContainer.innerHTML = "Invalid YouTube video URL";
+            }
+        }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
