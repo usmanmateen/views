@@ -19,7 +19,7 @@
 </head>
 <body>
     <h1>YouTube Video Embed</h1>
-    <label for="video-link">YouTube Video Link:</label>
+    <label for="video-link">YouTube Video URL:</label>
     <input type="text" id="video-link">
 
     <label for="embed-count">Number of Embeds:</label>
@@ -30,18 +30,36 @@
     <div class="video-container" id="video-container"></div>
 
     <script>
+        function getVideoIdFromUrl(url) {
+            var videoId = "";
+            var regex = /[?&]v=([^&#]*)/;
+
+            var match = regex.exec(url);
+            if (match && match[1]) {
+                videoId = match[1];
+            }
+
+            return videoId;
+        }
+
         function embedVideos() {
-            var videoLink = document.getElementById("video-link").value;
+            var videoUrl = document.getElementById("video-link").value;
             var embedCount = parseInt(document.getElementById("embed-count").value);
             var videoContainer = document.getElementById("video-container");
 
             videoContainer.innerHTML = "";
 
-            for (var i = 0; i < embedCount; i++) {
-                var iframe = document.createElement("iframe");
-                iframe.src = videoLink + "?autoplay=1";
-                iframe.allowfullscreen = true;
-                videoContainer.appendChild(iframe);
+            var videoId = getVideoIdFromUrl(videoUrl);
+
+            if (videoId) {
+                for (var i = 0; i < embedCount; i++) {
+                    var iframe = document.createElement("iframe");
+                    iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+                    iframe.allowfullscreen = true;
+                    videoContainer.appendChild(iframe);
+                }
+            } else {
+                videoContainer.innerHTML = "Invalid YouTube video URL";
             }
         }
     </script>
