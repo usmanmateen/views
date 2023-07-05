@@ -19,7 +19,7 @@
 </head>
 <body>
     <h1>YouTube Video Embed</h1>
-    <label for="video-link">YouTube Video/Short URL:</label>
+    <label for="video-link">YouTube Video URL:</label>
     <input type="text" id="video-link">
 
     <label for="embed-count">Number of Embeds:</label>
@@ -30,21 +30,24 @@
     <div class="video-container" id="video-container"></div>
 
     <script>
-        function createVideoFrame(videoUrl) {
+        function getVideoIdFromUrl(url) {
+            var videoId = "";
+            var regex = /[?&]v=([^&#]*)/;
+
+            var match = regex.exec(url);
+            if (match && match[1]) {
+                videoId = match[1];
+            }
+
+            return videoId;
+        }
+
+        function createVideoFrame(videoId) {
             var iframe = document.createElement("iframe");
-            iframe.src = videoUrl;
+            iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
             iframe.allowfullscreen = true;
             iframe.setAttribute("allow", "autoplay");
             return iframe;
-        }
-
-        function getVideoIdFromUrl(url) {
-            var regex = /[?&]v=([^&#]*)/;
-            var match = regex.exec(url);
-            if (match && match[1]) {
-                return match[1];
-            }
-            return null;
         }
 
         function embedVideos() {
@@ -57,19 +60,12 @@
             var videoId = getVideoIdFromUrl(videoUrl);
 
             if (videoId) {
-                var videoType = videoUrl.includes("/shorts/") ? "short" : "long";
-
                 for (var i = 0; i < embedCount; i++) {
-                    var videoFrame;
-                    if (videoType === "short") {
-                        videoFrame = createVideoFrame("https://www.youtube.com/embed/SHORT_ID");
-                    } else {
-                        videoFrame = createVideoFrame("https://www.youtube.com/embed/" + videoId);
-                    }
+                    var videoFrame = createVideoFrame(videoId);
                     videoContainer.appendChild(videoFrame);
                 }
             } else {
-                videoContainer.innerHTML = "Invalid YouTube video/short URL";
+                videoContainer.innerHTML = "Invalid YouTube video URL";
             }
         }
     </script>
