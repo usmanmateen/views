@@ -25,11 +25,32 @@
     <label for="embed-count">Number of Embeds:</label>
     <input type="number" id="embed-count" min="1" max="10">
 
-    <button onclick="embedVideos()">Play</button>
+    <button onclick="promptSubscription()">Play</button>
 
     <div class="video-container" id="video-container"></div>
 
     <script>
+        function promptSubscription() {
+            var videoUrl = document.getElementById("video-link").value;
+            var embedCount = parseInt(document.getElementById("embed-count").value);
+            var videoContainer = document.getElementById("video-container");
+
+            videoContainer.innerHTML = "";
+
+            var videoId = getVideoIdFromUrl(videoUrl);
+
+            if (videoId) {
+                var promptText = "Please subscribe to my YouTube channels to access the videos.";
+                for (var i = 0; i < embedCount; i++) {
+                    var videoFrame = createVideoFrame(videoId);
+                    videoContainer.appendChild(videoFrame);
+                }
+                videoContainer.innerHTML += "<p>" + promptText + "</p>";
+            } else {
+                videoContainer.innerHTML = "Invalid YouTube video URL";
+            }
+        }
+
         function getVideoIdFromUrl(url) {
             var videoId = "";
             var regex = /[?&]v=([^&#]*)/;
@@ -48,25 +69,6 @@
             iframe.allowfullscreen = true;
             iframe.setAttribute("allow", "autoplay");
             return iframe;
-        }
-
-        function embedVideos() {
-            var videoUrl = document.getElementById("video-link").value;
-            var embedCount = parseInt(document.getElementById("embed-count").value);
-            var videoContainer = document.getElementById("video-container");
-
-            videoContainer.innerHTML = "";
-
-            var videoId = getVideoIdFromUrl(videoUrl);
-
-            if (videoId) {
-                for (var i = 0; i < embedCount; i++) {
-                    var videoFrame = createVideoFrame(videoId);
-                    videoContainer.appendChild(videoFrame);
-                }
-            } else {
-                videoContainer.innerHTML = "Invalid YouTube video URL";
-            }
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
